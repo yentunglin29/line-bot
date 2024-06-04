@@ -3,6 +3,8 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
+from scraper import fetch_auction_data
+
 app = Flask(__name__)
 
 # Channel Access Token
@@ -27,11 +29,24 @@ def callback():
 
     return 'OK'
 
+# @handler.add(MessageEvent, message=TextMessage)
+# def handle_message(event):
+#     line_bot_api.reply_message(
+#         event.reply_token,
+#         TextSendMessage(text=event.message.text))
+
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=event.message.text))
+    if event.message.text == "查詢法拍屋":
+        data = fetch_auction_data()
+        response = "\n".join(data)
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=response))
+    else:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="請輸入 '查詢法拍屋' 以獲取最新資料"))
 
 if __name__ == "__main__":
     app.run()

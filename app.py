@@ -5,12 +5,20 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
 from scraper import fetch_auction_data
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+token = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
+secret = os.getenv("LINE_CHANNEL_SECRET")
+
 app = Flask(__name__)
 
 # Channel Access Token
-line_bot_api = LineBotApi('YOUR_CHANNEL_ACCESS_TOKEN')
+line_bot_api = LineBotApi(token)
 # Channel Secret
-handler = WebhookHandler('YOUR_CHANNEL_SECRET')
+handler = WebhookHandler(secret)
 
 @app.route("/callback", methods=['POST'])
 def callback():
